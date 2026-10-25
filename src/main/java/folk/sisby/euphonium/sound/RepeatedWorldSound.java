@@ -1,9 +1,9 @@
 package folk.sisby.euphonium.sound;
 
 import folk.sisby.euphonium.EuphoniumClient;
-import net.minecraft.client.sound.MovingSoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ConcurrentModificationException;
@@ -13,12 +13,12 @@ public abstract class RepeatedWorldSound extends WorldSound {
 	protected BlockPos pos;
 	protected int soundTicks = 100; // set something high here so it doesn't autoplay when player logs in
 
-	public RepeatedWorldSound(PlayerEntity player) {
+	public RepeatedWorldSound(Player player) {
 		super(player);
 	}
 
 	@Override
-	public MovingSoundInstance getSoundInstance() {
+	public AbstractTickableSoundInstance getSoundInstance() {
 		return soundInstance;
 	}
 
@@ -35,7 +35,7 @@ public abstract class RepeatedWorldSound extends WorldSound {
 			var manager = getSoundManager();
 
 			try {
-				if (!manager.isPlaying(soundInstance)) {
+				if (!manager.isActive(soundInstance)) {
 					manager.play(soundInstance);
 				}
 			} catch (ConcurrentModificationException e) {
@@ -46,7 +46,7 @@ public abstract class RepeatedWorldSound extends WorldSound {
 
 	@Override
 	public int getDelay() {
-		return level.random.nextInt(200) + 200;
+		return level.getRandom().nextInt(200) + 200;
 	}
 
 	@Nullable

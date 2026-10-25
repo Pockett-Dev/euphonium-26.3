@@ -6,14 +6,14 @@ import folk.sisby.euphonium.sound.RepeatedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
 import folk.sisby.euphonium.sounds.biome.TheEnd;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class Alien implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public Alien() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.alien"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.alien"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -22,7 +22,7 @@ public class Alien implements ISoundType<WorldSound> {
 		handler.getSounds().add(new RepeatedWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				var holder = getBiomeHolder(player.getBlockPos());
+				var holder = getBiomeHolder(player.blockPosition());
 				return TheEnd.VALID_BIOME.test(holder);
 			}
 
@@ -39,7 +39,7 @@ public class Alien implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(400) + 300;
+				return level.getRandom().nextInt(400) + 300;
 			}
 
 			@Override

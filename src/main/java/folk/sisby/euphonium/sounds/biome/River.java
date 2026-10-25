@@ -5,23 +5,23 @@ import folk.sisby.euphonium.sound.BiomeSound;
 import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.SurfaceBiomeSound;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiPredicate;
 
 public class River implements ISoundType<BiomeSound> {
 	public static SoundEvent SOUND;
-	public static BiPredicate<RegistryEntry<Biome>, RegistryKey<Biome>> VALID_BIOME =
-		(holder, key) -> key.equals(BiomeKeys.RIVER) || holder.isIn(ConventionalBiomeTags.RIVER);
+	public static BiPredicate<Holder<Biome>, ResourceKey<Biome>> VALID_BIOME =
+		(holder, key) -> key.equals(Biomes.RIVER) || holder.is(ConventionalBiomeTags.IS_RIVER);
 
 	public River() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("biome.river"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("biome.river"));
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class River implements ISoundType<BiomeSound> {
 			}
 
 			@Override
-			public boolean isValidBiomeCondition(RegistryEntry<Biome> holder, RegistryKey<Biome> key) {
+			public boolean isValidBiomeCondition(Holder<Biome> holder, ResourceKey<Biome> key) {
 				return VALID_BIOME.test(holder, key);
 			}
 		});

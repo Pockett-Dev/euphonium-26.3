@@ -6,25 +6,25 @@ import folk.sisby.euphonium.sound.BiomeSound;
 import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.SurfaceBiomeSound;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BiomeTags;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.biome.Biome;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 public class Forest implements ISoundType<BiomeSound> {
-	public static final Predicate<RegistryEntry<Biome>> VALID_BIOME =
-		holder -> holder.isIn(BiomeTags.IS_FOREST) || holder.isIn(ConventionalBiomeTags.FOREST);
+	public static final Predicate<Holder<Biome>> VALID_BIOME =
+		holder -> holder.is(BiomeTags.IS_FOREST) || holder.is(ConventionalBiomeTags.IS_FOREST);
 	public static SoundEvent DAY_SOUND;
 	public static SoundEvent NIGHT_SOUND;
 
 	public Forest() {
-		DAY_SOUND = SoundEvent.of(EuphoniumClient.id("biome.forest.day"));
-		NIGHT_SOUND = SoundEvent.of(EuphoniumClient.id("biome.forest.night"));
+		DAY_SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("biome.forest.day"));
+		NIGHT_SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("biome.forest.night"));
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class Forest implements ISoundType<BiomeSound> {
 			}
 
 			@Override
-			public boolean isValidBiomeCondition(RegistryEntry<Biome> holder, RegistryKey<Biome> key) {
+			public boolean isValidBiomeCondition(Holder<Biome> holder, ResourceKey<Biome> key) {
 				return VALID_BIOME.test(holder);
 			}
 		});
@@ -62,7 +62,7 @@ public class Forest implements ISoundType<BiomeSound> {
 			}
 
 			@Override
-			public boolean isValidBiomeCondition(RegistryEntry<Biome> holder, RegistryKey<Biome> key) {
+			public boolean isValidBiomeCondition(Holder<Biome> holder, ResourceKey<Biome> key) {
 				return VALID_BIOME.test(holder);
 			}
 		});

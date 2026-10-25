@@ -1,28 +1,28 @@
 package folk.sisby.euphonium.sound;
 
 import folk.sisby.euphonium.EuphoniumClient;
-import net.minecraft.client.sound.MovingSoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
 
 import java.util.function.Predicate;
 
-public class LoopingSound extends MovingSoundInstance {
+public class LoopingSound extends AbstractTickableSoundInstance {
 	public static int FADE_TIME = 140;
 
-	private final PlayerEntity player;
-	private final Predicate<PlayerEntity> predicate;
+	private final Player player;
+	private final Predicate<Player> predicate;
 	public float maxVolume;
 	private int longTicks;
 
-	public LoopingSound(PlayerEntity player, SoundEvent sound, float volume, float pitch, Predicate<PlayerEntity> predicate) {
-		super(sound, EuphoniumClient.CONFIG.channel, Random.create());
+	public LoopingSound(Player player, SoundEvent sound, float volume, float pitch, Predicate<Player> predicate) {
+		super(sound, EuphoniumClient.CONFIG.channel, RandomSource.create());
 
 		this.maxVolume = volume;
 		this.player = player;
-		this.repeat = true;
-		this.repeatDelay = 0;
+		this.looping = true;
+		this.delay = 0;
 		this.volume = 0.01F;
 		this.pitch = pitch;
 		this.relative = true;
@@ -43,13 +43,13 @@ public class LoopingSound extends MovingSoundInstance {
 			this.longTicks = Math.min(this.longTicks, FADE_TIME);
 			this.volume = Math.max(0.0F, Math.min((float) this.longTicks / FADE_TIME, 1.0F)) * maxVolume;
 
-			boolean donePlaying = this.isDone();
+			boolean donePlaying = this.isStopped();
 
 			if (!donePlaying && this.volume == 0.0F && this.longTicks < -100)
-				this.setDone();
+				this.stop();
 
 		} else {
-			this.setDone();
+			this.stop();
 		}
 	}
 }

@@ -7,14 +7,14 @@ import folk.sisby.euphonium.sound.RepeatedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
 import folk.sisby.euphonium.sounds.biome.Icy;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class Snowstorm implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public Snowstorm() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.snowstorm"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.snowstorm"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -23,7 +23,7 @@ public class Snowstorm implements ISoundType<WorldSound> {
 		handler.getSounds().add(new RepeatedWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				var holder = getBiomeHolder(player.getBlockPos());
+				var holder = getBiomeHolder(player.blockPosition());
 				return Icy.VALID_BIOME.test(holder);
 			}
 
@@ -41,7 +41,7 @@ public class Snowstorm implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(250) + 250;
+				return level.getRandom().nextInt(250) + 250;
 			}
 
 			@Override

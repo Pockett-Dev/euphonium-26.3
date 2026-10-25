@@ -6,15 +6,15 @@ import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.LoopedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.Nullable;
 
 public class CaveDepth implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public CaveDepth() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.deep_cave"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.deep_cave"));
 	}
 
 	@Override
@@ -24,28 +24,28 @@ public class CaveDepth implements ISoundType<WorldSound> {
 		handler.getSounds().add(new LoopedWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				var pos = player.getBlockPos();
+				var pos = player.blockPosition();
 
 				// Don't play this if the player is in the Deep Dark, the combined sounds are too intense.
 				var key = getBiomeKey(pos);
-				if (key == BiomeKeys.DEEP_DARK) {
+				if (key == Biomes.DEEP_DARK) {
 					return false;
 				}
 
-				if (!EuphoniumWorld.VALID_CAVE_DIMENSIONS.contains(level.getRegistryKey().getValue())) {
+				if (!EuphoniumWorld.VALID_CAVE_DIMENSIONS.contains(level.dimension().identifier())) {
 					return false;
 				}
 
-				var light = level.getLightLevel(pos);
-				var bottom = level.getBottomY() < 0 ? 0 : 32;
-				return !level.isSkyVisibleAllowingSea(pos)
+				var light = level.getMaxLocalRawBrightness(pos);
+				var bottom = level.getMinY() < 0 ? 0 : 32;
+				return !level.canSeeSkyFromBelowWater(pos)
 					&& pos.getY() <= bottom
 					&& light < EuphoniumClient.CONFIG.worldAmbience.caveLightLevel;
 			}
 
 			@Override
 			public boolean isValidPlayerCondition() {
-				return !player.isSubmergedInWater();
+				return !player.isUnderWater();
 			}
 
 			@Nullable

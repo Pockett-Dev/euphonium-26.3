@@ -1,22 +1,22 @@
 package folk.sisby.euphonium.sound;
 
 import folk.sisby.euphonium.EuphoniumClient;
-import net.minecraft.client.sound.MovingSoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
-public class SingleSound extends MovingSoundInstance {
-	private final PlayerEntity player;
+public class SingleSound extends AbstractTickableSoundInstance {
+	private final Player player;
 
-	public SingleSound(PlayerEntity player, SoundEvent sound, float volume, float pitch, @Nullable BlockPos pos) {
-		super(sound, EuphoniumClient.CONFIG.channel, Random.create());
+	public SingleSound(Player player, SoundEvent sound, float volume, float pitch, @Nullable BlockPos pos) {
+		super(sound, EuphoniumClient.CONFIG.channel, RandomSource.create());
 
 		this.player = player;
-		this.repeat = false;
-		this.repeatDelay = 0;
+		this.looping = false;
+		this.delay = 0;
 		this.pitch = pitch;
 		this.volume = volume;
 
@@ -32,7 +32,7 @@ public class SingleSound extends MovingSoundInstance {
 	@Override
 	public void tick() {
 		if (player == null || !player.isAlive()) {
-			this.setDone();
+			this.stop();
 		}
 	}
 }

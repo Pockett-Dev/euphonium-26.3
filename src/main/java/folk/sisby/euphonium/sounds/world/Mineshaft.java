@@ -1,13 +1,14 @@
 package folk.sisby.euphonium.sounds.world;
 
 import folk.sisby.euphonium.EuphoniumClient;
+import folk.sisby.euphonium.helper.WorldHelper;
 import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.RepeatedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
-import net.minecraft.block.Blocks;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -16,7 +17,7 @@ public class Mineshaft implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public Mineshaft() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.mineshaft"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.mineshaft"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -26,7 +27,7 @@ public class Mineshaft implements ISoundType<WorldSound> {
 			@Override
 			public boolean isValidSituationCondition() {
 				// Find the closest rail block in the mineshaft.  This will become the sound source.
-				Optional<BlockPos> rail = BlockPos.findClosest(player.getBlockPos(), 8, 16, pos -> {
+				Optional<BlockPos> rail = WorldHelper.findClosest(player.blockPosition(), 8, 16, pos -> {
 					var block = level.getBlockState(pos).getBlock();
 					return block == Blocks.RAIL;
 				});
@@ -52,7 +53,7 @@ public class Mineshaft implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(300) + 300;
+				return level.getRandom().nextInt(300) + 300;
 			}
 
 			@Override

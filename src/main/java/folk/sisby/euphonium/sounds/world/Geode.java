@@ -6,11 +6,11 @@ import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.RepeatedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
-import net.minecraft.block.AmethystBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.AmethystBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -19,7 +19,7 @@ public class Geode implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public Geode() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.geode"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.geode"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -28,12 +28,12 @@ public class Geode implements ISoundType<WorldSound> {
 		handler.getSounds().add(new RepeatedWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				Optional<BlockPos> optAmethyst = BlockPos.findClosest(player.getBlockPos(), 12, 8, pos -> {
+				Optional<BlockPos> optAmethyst = WorldHelper.findClosest(player.blockPosition(), 12, 8, pos -> {
 					Block block = level.getBlockState(pos).getBlock();
 					return block instanceof AmethystBlock;
 				});
 
-				Optional<BlockPos> optSmoothBasalt = BlockPos.findClosest(player.getBlockPos(), 12, 8, pos -> {
+				Optional<BlockPos> optSmoothBasalt = WorldHelper.findClosest(player.blockPosition(), 12, 8, pos -> {
 					Block block = level.getBlockState(pos).getBlock();
 					return block == Blocks.SMOOTH_BASALT;
 				});
@@ -60,7 +60,7 @@ public class Geode implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(350) + 300;
+				return level.getRandom().nextInt(350) + 300;
 			}
 
 			@Override
@@ -70,7 +70,7 @@ public class Geode implements ISoundType<WorldSound> {
 
 			@Override
 			public float getPitch() {
-				return 0.8F + (0.4F * level.random.nextFloat());
+				return 0.8F + (0.4F * level.getRandom().nextFloat());
 			}
 		});
 	}

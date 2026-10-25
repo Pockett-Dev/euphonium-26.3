@@ -6,15 +6,15 @@ import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.RepeatedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.World;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class High implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public High() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.high"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.high"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -23,15 +23,15 @@ public class High implements ISoundType<WorldSound> {
 		handler.getSounds().add(new RepeatedWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				int top = level.getTopY() > 256 ? 200 : 150;
+				int top = level.getHeight() > 256 ? 200 : 150;
 
-				return level.getRegistryKey() == World.OVERWORLD
-					&& player.getBlockPos().getY() > top;
+				return level.dimension() == Level.OVERWORLD
+					&& player.blockPosition().getY() > top;
 			}
 
 			@Override
 			public boolean isValidPlayerCondition() {
-				return level.getRegistryKey() == World.OVERWORLD
+				return level.dimension() == Level.OVERWORLD
 					&& WorldHelper.isOutside(player);
 			}
 
@@ -43,7 +43,7 @@ public class High implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(100) + 100;
+				return level.getRandom().nextInt(100) + 100;
 			}
 
 			@Override

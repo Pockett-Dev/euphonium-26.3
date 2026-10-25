@@ -8,14 +8,14 @@ import folk.sisby.euphonium.sound.SurfaceWorldSound;
 import folk.sisby.euphonium.sound.WorldSound;
 import folk.sisby.euphonium.sounds.biome.Icy;
 import folk.sisby.euphonium.sounds.biome.Mountains;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class Bleak implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public Bleak() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.bleak"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.bleak"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -24,7 +24,7 @@ public class Bleak implements ISoundType<WorldSound> {
 		handler.getSounds().add(new SurfaceWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				var holder = getBiomeHolder(player.getBlockPos());
+				var holder = getBiomeHolder(player.blockPosition());
 				return Icy.VALID_BIOME.test(holder)
 					|| Mountains.VALID_BIOME.test(holder);
 			}
@@ -44,7 +44,7 @@ public class Bleak implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(750) + 500;
+				return level.getRandom().nextInt(750) + 500;
 			}
 
 			@Override

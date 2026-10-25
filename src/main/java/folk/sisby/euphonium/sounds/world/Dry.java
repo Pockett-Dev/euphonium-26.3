@@ -9,14 +9,14 @@ import folk.sisby.euphonium.sound.WorldSound;
 import folk.sisby.euphonium.sounds.biome.Badlands;
 import folk.sisby.euphonium.sounds.biome.Desert;
 import folk.sisby.euphonium.sounds.biome.Savanna;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class Dry implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public Dry() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.dry"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.dry"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -25,7 +25,7 @@ public class Dry implements ISoundType<WorldSound> {
 		handler.getSounds().add(new SurfaceWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				var holder = getBiomeHolder(player.getBlockPos());
+				var holder = getBiomeHolder(player.blockPosition());
 
 				return Badlands.VALID_BIOME.test(holder)
 					|| Desert.VALID_BIOME.test(holder)
@@ -47,7 +47,7 @@ public class Dry implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(750) + 500;
+				return level.getRandom().nextInt(750) + 500;
 			}
 
 			@Override

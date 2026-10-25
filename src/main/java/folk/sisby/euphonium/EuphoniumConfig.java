@@ -5,13 +5,13 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.FloatRange;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.IntegerRange;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
-import net.minecraft.sound.SoundCategory;
+import net.minecraft.sounds.SoundSource;
 
 import java.util.List;
 
 public class EuphoniumConfig extends WrappedConfig {
 	@Comment("The channel that Euphonium will use for playing sounds")
-	public SoundCategory channel = SoundCategory.AMBIENT;
+	public SoundSource channel = SoundSource.AMBIENT;
 
 	@Comment("Plays ambient background sound according to the biome and time of day")
 	public boolean biomeAmbienceEnabled = true;

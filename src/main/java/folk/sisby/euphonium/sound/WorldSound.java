@@ -1,37 +1,37 @@
 package folk.sisby.euphonium.sound;
 
 import folk.sisby.euphonium.EuphoniumClient;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.player.Player;
 
 public abstract class WorldSound implements ISoundInstance {
-	protected MinecraftClient client;
-	protected PlayerEntity player;
-	protected ClientWorld level;
+	protected Minecraft client;
+	protected Player player;
+	protected ClientLevel level;
 	protected boolean isValid;
 	protected boolean playUnderWater = false;
 
-	public WorldSound(PlayerEntity player) {
-		this.client = MinecraftClient.getInstance();
+	public WorldSound(Player player) {
+		this.client = Minecraft.getInstance();
 		this.player = player;
-		this.level = (ClientWorld) player.getWorld();
+		this.level = (ClientLevel) player.level();
 	}
 
 	@Override
-	public ClientWorld getLevel() {
+	public ClientLevel getLevel() {
 		return level;
 	}
 
 	@Override
-	public PlayerEntity getPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
 
 	@Override
-	public void updatePlayer(PlayerEntity player) {
+	public void updatePlayer(Player player) {
 		this.player = player;
-		this.level = (ClientWorld) player.getWorld();
+		this.level = (ClientLevel) player.level();
 	}
 
 	public abstract boolean isValidSituationCondition();
@@ -40,9 +40,9 @@ public abstract class WorldSound implements ISoundInstance {
 	public boolean isValid() {
 
 		// Initial filters.
-		if (client.world == null || level == null) return false;
+		if (client.level == null || level == null) return false;
 		if (!player.isAlive()) return false;
-		if (player.isSubmergedInWater() && !playUnderWater) return false;
+		if (player.isUnderWater() && !playUnderWater) return false;
 
 		return isValidSituationCondition()
 			&& isValidPlayerCondition();

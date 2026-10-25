@@ -6,10 +6,10 @@ import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.RepeatedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class Gravel implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public Gravel() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.gravel"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.gravel"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -27,7 +27,7 @@ public class Gravel implements ISoundType<WorldSound> {
 		handler.getSounds().add(new RepeatedWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				Optional<BlockPos> optBlock = BlockPos.findClosest(player.getBlockPos(), 8, 4, pos -> {
+				Optional<BlockPos> optBlock = WorldHelper.findClosest(player.blockPosition(), 8, 4, pos -> {
 					Block block = level.getBlockState(pos).getBlock();
 					return block == Blocks.GRAVEL;
 				});
@@ -49,7 +49,7 @@ public class Gravel implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(450) + 400;
+				return level.getRandom().nextInt(450) + 400;
 			}
 
 			@Override

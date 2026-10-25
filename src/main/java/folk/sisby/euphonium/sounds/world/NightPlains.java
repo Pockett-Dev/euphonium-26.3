@@ -8,14 +8,14 @@ import folk.sisby.euphonium.sound.SurfaceWorldSound;
 import folk.sisby.euphonium.sound.WorldSound;
 import folk.sisby.euphonium.sounds.biome.Plains;
 import folk.sisby.euphonium.sounds.biome.Savanna;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class NightPlains implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public NightPlains() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.night_plains"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.night_plains"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -24,8 +24,8 @@ public class NightPlains implements ISoundType<WorldSound> {
 		handler.getSounds().add(new SurfaceWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				var holder = getBiomeHolder(player.getBlockPos());
-				var key = getBiomeKey(player.getBlockPos());
+				var holder = getBiomeHolder(player.blockPosition());
+				var key = getBiomeKey(player.blockPosition());
 				return Plains.VALID_BIOME.test(holder, key)
 					|| Savanna.VALID_BIOME.test(holder);
 			}
@@ -45,7 +45,7 @@ public class NightPlains implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(500) + 500;
+				return level.getRandom().nextInt(500) + 500;
 			}
 
 			@Override

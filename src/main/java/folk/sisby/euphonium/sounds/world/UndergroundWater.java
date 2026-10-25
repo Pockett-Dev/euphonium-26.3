@@ -6,10 +6,10 @@ import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.RepeatedWorldSound;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.WorldSound;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class UndergroundWater implements ISoundType<WorldSound> {
 	public static SoundEvent SOUND;
 
 	public UndergroundWater() {
-		SOUND = SoundEvent.of(EuphoniumClient.id("world.underground_water"));
+		SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("world.underground_water"));
 	}
 
 	public void addSounds(SoundHandler<WorldSound> handler) {
@@ -27,7 +27,7 @@ public class UndergroundWater implements ISoundType<WorldSound> {
 		handler.getSounds().add(new RepeatedWorldSound(handler.getPlayer()) {
 			@Override
 			public boolean isValidSituationCondition() {
-				Optional<BlockPos> optWater = BlockPos.findClosest(player.getBlockPos(), 12, 8, pos -> {
+				Optional<BlockPos> optWater = WorldHelper.findClosest(player.blockPosition(), 12, 8, pos -> {
 					Block block = level.getBlockState(pos).getBlock();
 					return block == Blocks.WATER;
 				});
@@ -43,7 +43,7 @@ public class UndergroundWater implements ISoundType<WorldSound> {
 			@Override
 			public boolean isValidPlayerCondition() {
 				return !WorldHelper.isOutside(player)
-					&& !player.isSubmergedInWater()
+					&& !player.isUnderWater()
 					&& WorldHelper.isBelowSeaLevel(player);
 			}
 
@@ -55,7 +55,7 @@ public class UndergroundWater implements ISoundType<WorldSound> {
 
 			@Override
 			public int getDelay() {
-				return level.random.nextInt(150) + 120;
+				return level.getRandom().nextInt(150) + 120;
 			}
 
 			@Override
@@ -65,7 +65,7 @@ public class UndergroundWater implements ISoundType<WorldSound> {
 
 			@Override
 			public float getPitch() {
-				return 0.77F + (0.3F * level.random.nextFloat());
+				return 0.77F + (0.3F * level.getRandom().nextFloat());
 			}
 		});
 	}

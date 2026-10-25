@@ -20,12 +20,12 @@ import folk.sisby.euphonium.sounds.world.UndergroundWater;
 import folk.sisby.euphonium.sounds.world.Village;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -63,33 +63,33 @@ public class EuphoniumWorld {
 	 * Can be called by other mods to add cave ambience to a custom dimension at runtime.
 	 */
 	@SuppressWarnings("unused")
-	public static void addCaveAmbienceToDimension(World level) {
-		var dimension = level.getRegistryKey().getValue();
+	public static void addCaveAmbienceToDimension(Level level) {
+		var dimension = level.dimension().identifier();
 		if (!VALID_CAVE_DIMENSIONS.contains(dimension)) {
 			VALID_CAVE_DIMENSIONS.add(dimension);
 		}
 	}
 
-	private static void handleClientTick(MinecraftClient client) {
+	private static void handleClientTick(Minecraft client) {
 		if (handler != null && !client.isPaused()) {
 			handler.tick();
 		}
 	}
 
-	private static void handleClientEntityLeave(Entity entity, World level) {
-		if (entity instanceof ClientPlayerEntity && handler != null) {
+	private static void handleClientEntityLeave(Entity entity, Level level) {
+		if (entity instanceof LocalPlayer && handler != null) {
 			handler.stop();
 		}
 	}
 
-	private static void handleClientEntityJoin(Entity entity, World level) {
-		if (entity instanceof ClientPlayerEntity player) {
+	private static void handleClientEntityJoin(Entity entity, Level level) {
+		if (entity instanceof LocalPlayer player) {
 			trySetupSoundHandler(player);
 		}
 	}
 
-	private static void trySetupSoundHandler(PlayerEntity player) {
-		if (!(player instanceof ClientPlayerEntity)) return;
+	private static void trySetupSoundHandler(Player player) {
+		if (!(player instanceof LocalPlayer)) return;
 
 		if (handler == null) {
 			handler = new Handler(player);
@@ -99,7 +99,7 @@ public class EuphoniumWorld {
 	}
 
 	public static class Handler extends SoundHandler<WorldSound> {
-		public Handler(@NotNull PlayerEntity player) {
+		public Handler(@NotNull Player player) {
 			super(player);
 
 			ALIEN.addSounds(this);

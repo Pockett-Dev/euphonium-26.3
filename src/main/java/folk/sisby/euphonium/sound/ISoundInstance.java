@@ -1,16 +1,15 @@
 package folk.sisby.euphonium.sound;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.MovingSoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -21,35 +20,31 @@ public interface ISoundInstance {
 
 	void tick();
 
-	void updatePlayer(PlayerEntity player);
+	void updatePlayer(Player player);
 
-	PlayerEntity getPlayer();
+	Player getPlayer();
 
-	ClientWorld getLevel();
+	ClientLevel getLevel();
 
 	@Nullable
 	SoundEvent getSound();
 
-	MovingSoundInstance getSoundInstance();
+	AbstractTickableSoundInstance getSoundInstance();
 
 	default Biome getBiome(BlockPos pos) {
 		return getBiomeHolder(pos).value();
 	}
 
-	default RegistryKey<Biome> getBiomeKey(BlockPos pos) {
-		var biome = getBiome(pos);
-		return getLevel().getRegistryManager()
-			.get(RegistryKeys.BIOME)
-			.getKey(biome)
-			.orElse(null);
+	default ResourceKey<Biome> getBiomeKey(BlockPos pos) {
+		return getBiomeHolder(pos).unwrapKey().orElse(null);
 	}
 
-	default RegistryEntry<Biome> getBiomeHolder(BlockPos pos) {
-		return getPlayer().getWorld().getBiome(pos);
+	default Holder<Biome> getBiomeHolder(BlockPos pos) {
+		return getPlayer().level().getBiome(pos);
 	}
 
-	default MinecraftClient getMinecraft() {
-		return MinecraftClient.getInstance();
+	default Minecraft getMinecraft() {
+		return Minecraft.getInstance();
 	}
 
 	default SoundManager getSoundManager() {
@@ -58,7 +53,7 @@ public interface ISoundInstance {
 
 	default boolean isPlaying() {
 		return getSoundInstance() != null
-			&& getSoundManager().isPlaying(getSoundInstance());
+			&& getSoundManager().isActive(getSoundInstance());
 	}
 
 	default void stop() {

@@ -6,24 +6,24 @@ import folk.sisby.euphonium.sound.BiomeSound;
 import folk.sisby.euphonium.sound.ISoundType;
 import folk.sisby.euphonium.sound.SoundHandler;
 import folk.sisby.euphonium.sound.SurfaceBiomeSound;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiPredicate;
 
 public class Beach implements ISoundType<BiomeSound> {
-	public static final BiPredicate<RegistryEntry<Biome>, RegistryKey<Biome>> VALID_BIOME =
-		(holder, key) -> key.equals(BiomeKeys.BEACH) || key.equals(BiomeKeys.STONY_SHORE);
+	public static final BiPredicate<Holder<Biome>, ResourceKey<Biome>> VALID_BIOME =
+		(holder, key) -> key.equals(Biomes.BEACH) || key.equals(Biomes.STONY_SHORE);
 	public static SoundEvent DAY_SOUND;
 	public static SoundEvent NIGHT_SOUND;
 
 	public Beach() {
-		DAY_SOUND = SoundEvent.of(EuphoniumClient.id("biome.beach.day"));
-		NIGHT_SOUND = SoundEvent.of(EuphoniumClient.id("biome.beach.night"));
+		DAY_SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("biome.beach.day"));
+		NIGHT_SOUND = SoundEvent.createVariableRangeEvent(EuphoniumClient.id("biome.beach.night"));
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class Beach implements ISoundType<BiomeSound> {
 			}
 
 			@Override
-			public boolean isValidBiomeCondition(RegistryEntry<Biome> holder, RegistryKey<Biome> key) {
+			public boolean isValidBiomeCondition(Holder<Biome> holder, ResourceKey<Biome> key) {
 				return VALID_BIOME.test(holder, key);
 			}
 		});
@@ -61,7 +61,7 @@ public class Beach implements ISoundType<BiomeSound> {
 			}
 
 			@Override
-			public boolean isValidBiomeCondition(RegistryEntry<Biome> holder, RegistryKey<Biome> key) {
+			public boolean isValidBiomeCondition(Holder<Biome> holder, ResourceKey<Biome> key) {
 				return VALID_BIOME.test(holder, key);
 			}
 		});
