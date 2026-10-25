@@ -9,7 +9,7 @@ plugins {
 }
 
 version = "$baseVersion+$branch"
-archivesBaseName = project.slug
+base.archivesName = project.slug
 
 repositories {
 	maven { url "https://repo.sleeping.town/" }
@@ -20,10 +20,9 @@ dependencies {
 	include libs.kaleidoConfig
 
 	minecraft libs.mc
-	mappings variantOf(libs.yarn) { classifier "v2" }
-	modImplementation libs.fl
+	implementation libs.fl
 
-	modImplementation libs.fapi
+	implementation libs.fapi
 }
 
 processResources {
@@ -49,18 +48,19 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 17
+	it.options.release = 25
 }
 
 java {
+	toolchain.languageVersion = JavaLanguageVersion.of(25)
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${archivesBaseName}" }
+		rename { "${it}_${base.archivesName.get()}" }
 	}
 }
 
@@ -70,7 +70,7 @@ githubRelease {
 	repo = slug
 	tagName = "v${baseVersion}+${tagBranch}"
 	targetCommitish = tagBranch
-	releaseAssets = remapJar
+	releaseAssets = jar
 	releaseName = "v${baseVersion}"
 	allowUploadToExisting = true
 	generateReleaseNotes = true
@@ -81,7 +81,7 @@ modrinth {
 	token = "$System.env.MODRINTH_TOKEN"
 	projectId = slug
 	versionNumber = project.version
-	uploadFile = remapJar
+	uploadFile = jar
 	gameVersions = compatibleVersions.split(", ").toList()
 	loaders = compatibleLoaders.split(", ").toList()
 	changelog = !file("CHANGELOG.md").exists() ? "" : rootProject.file("CHANGELOG.md").text + "\n\nChangelog: https://github.com/${user}/${slug}/releases/tag/v${baseVersion}+${tagBranch}"
@@ -95,7 +95,7 @@ tasks.register('curseforge', net.darkhax.curseforgegradle.TaskPublishCurseForge)
 	apiToken = "$System.env.CURSEFORGE_TOKEN"
 	disableVersionDetection()
 	def projectId = "1402856"
-	def mainFile = upload(projectId, remapJar)
+	def mainFile = upload(projectId, jar)
 	compatibleLoaders.split(", ").toList().forEach { mainFile.addModLoader(it) }
 	compatibleVersions.split(", ").toList().forEach { mainFile.addGameVersion(it) }
 	mainFile.addEnvironment("client")
@@ -110,4 +110,13 @@ tasks.register("fullRelease") {
 	dependsOn "githubRelease"
 	dependsOn "modrinth"
 	dependsOn "curseforge"
+}
+
+tasks.withType(Jar).configureEach {
+	preserveFileTimestamps = false
+	reproducibleFileOrder = true
+}
+
+loom.runs.client {
+	vmArg "-Xmx2G"
 }
