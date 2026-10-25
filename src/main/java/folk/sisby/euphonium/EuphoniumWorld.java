@@ -71,14 +71,15 @@ public class EuphoniumWorld {
 	}
 
 	private static void handleClientTick(Minecraft client) {
-		if (handler != null && !client.isPaused()) {
+		if (handler != null && client.level != null && client.player != null && !client.isPaused()) {
 			handler.tick();
 		}
 	}
 
 	private static void handleClientEntityLeave(Entity entity, Level level) {
-		if (entity instanceof LocalPlayer && handler != null) {
+		if (handler != null && entity == handler.getPlayer()) {
 			handler.stop();
+			handler = null;
 		}
 	}
 
